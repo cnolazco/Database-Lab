@@ -39,4 +39,8 @@ SELECT Clientes.Nombre, Clientes.PrimerApellido,
 TotalPedidos = (SELECT COUNT(Pedidos.ID_Cliente) FROM Pedidos WHERE Pedidos.ID_Cliente = Clientes.ID_Cliente)
 FROM Clientes
 
--- – 1 Select With * 1 Select into
+--- – 1 Select With * 1 Select into
+CREATE SCHEMA AlmacenesGuanajuato
+SELECT * INTO AlmacenesGuanajuato
+FROM Almacenes
+WHERE Estado = 'Guanajuato';
