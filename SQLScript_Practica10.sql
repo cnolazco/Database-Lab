@@ -80,6 +80,482 @@ ALTER DATABASE [LBD] SET QUERY_STORE = OFF
 GO
 USE [LBD]
 GO
+/****** Object:  Table [dbo].[Clientes]    Script Date: 05/06/2020 09:13:58 a. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Clientes](
+	[ID_Cliente] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [varchar](50) NOT NULL,
+	[PrimerApellido] [varchar](50) NOT NULL,
+	[SegundoApellido] [varchar](50) NOT NULL,
+	[NombreCompleto]  AS (((([Nombre]+' ')+[PrimerApellido])+' ')+[SegundoApellido]),
+	[FechaDeNacimiento] [datetime] NOT NULL,
+	[Edad] [int] NOT NULL,
+	[CorreoElectronico] [varchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ID_Cliente] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Pedidos]    Script Date: 05/06/2020 09:13:58 a. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Pedidos](
+	[ID_Pedido] [int] IDENTITY(1,1) NOT NULL,
+	[ID_Cliente] [int] NOT NULL,
+	[ID_Producto] [int] NOT NULL,
+	[ID_Proveedor] [int] NOT NULL,
+	[ID_Almacen] [int] NOT NULL,
+	[FechaPedido] [date] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ID_Pedido] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Producto]    Script Date: 05/06/2020 09:13:58 a. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Producto](
+	[ID_Producto] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [varchar](50) NOT NULL,
+	[Categoria] [varchar](50) NOT NULL,
+	[Proveedor] [int] NOT NULL,
+	[Costo] [float] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ID_Producto] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Proveedores]    Script Date: 05/06/2020 09:13:58 a. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Proveedores](
+	[ID_Proveedor] [int] IDENTITY(1,1) NOT NULL,
+	[RFC] [varchar](13) NOT NULL,
+	[RazonSocial] [varchar](50) NOT NULL,
+	[Calle] [varchar](50) NOT NULL,
+	[NumeroExt] [varchar](10) NOT NULL,
+	[NumeroInt] [varchar](50) NOT NULL,
+	[Colonia] [varchar](50) NOT NULL,
+	[CodigoPostal] [varchar](50) NOT NULL,
+	[Estado] [varchar](50) NOT NULL,
+	[Pais] [varchar](50) NOT NULL,
+	[DireccionProveedor]  AS ((((((((((((([Calle]+' ')+[NumeroInt])+' ')+[NumeroExt])+' ')+[Colonia])+' ')+[CodigoPostal])+' ')+[Estado])+' ')+[Pais])+' '),
+PRIMARY KEY CLUSTERED 
+(
+}	[ID_Proveedor] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Almacenes]    Script Date: 05/06/2020 09:13:58 a. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Almacenes](
+	[ID_Almacen] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [varchar](50) NOT NULL,
+	[Calle] [varchar](50) NOT NULL,
+	[NumeroExt] [varchar](20) NOT NULL,
+	[NumeroInt] [varchar](50) NOT NULL,
+	[Colonia] [varchar](50) NOT NULL,
+	[CodigoPostal] [varchar](50) NOT NULL,
+	[Estado] [varchar](50) NOT NULL,
+	[Pais] [varchar](50) NOT NULL,
+	[DireccionAlmacen]  AS ((((((((((((([Calle]+' ')+[NumeroInt])+' ')+[NumeroExt])+' ')+[Colonia])+' ')+[CodigoPostal])+' ')+[Estado])+' ')+[Pais])+' '),
+PRIMARY KEY CLUSTERED 
+(
+	[ID_Almacen] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Index [index_FechaEmisionPedidos]    Script Date: 05/06/2020 09:13:58 a. m. ******/
+CREATE NONCLUSTERED INDEX [index_FechaEmisionPedidos] ON [dbo].[Pedidos]
+(
+	[FechaPedido] DESC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+/****** Practica 3:  Add to the sql script backup at least 5 relations ******/
+ALTER TABLE [dbo].[Pedidos]  WITH CHECK ADD  CONSTRAINT [FK_AlmacenOrder] FOREIGN KEY([ID_Almacen])
+REFERENCES [dbo].[Almacenes] ([ID_Almacen])
+GO
+ALTER TABLE [dbo].[Pedidos] CHECK CONSTRAINT [FK_AlmacenOrder]
+GO
+ALTER TABLE [dbo].[Pedidos]  WITH CHECK ADD  CONSTRAINT [FK_ClienteOrder] FOREIGN KEY([ID_Cliente])
+REFERENCES [dbo].[Clientes] ([ID_Cliente])
+GO
+ALTER TABLE [dbo].[Pedidos] CHECK CONSTRAINT [FK_ClienteOrder]
+GO
+ALTER TABLE [dbo].[Pedidos]  WITH CHECK ADD  CONSTRAINT [FK_ProductOrder] FOREIGN KEY([ID_Producto])
+REFERENCES [dbo].[Producto] ([ID_Producto])
+GO
+ALTER TABLE [dbo].[Pedidos] CHECK CONSTRAINT [FK_ProductOrder]
+GO
+ALTER TABLE [dbo].[Producto]  WITH CHECK ADD  CONSTRAINT [FK_ProvedorOrder] FOREIGN KEY([Proveedor])
+REFERENCES [dbo].[Proveedores] ([ID_Proveedor])
+GO
+ALTER TABLE [dbo].[Producto] CHECK CONSTRAINT [FK_ProvedorOrder]
+GO
+ALTER TABLE [dbo].[Clientes]  WITH CHECK ADD  CONSTRAINT [CHK_Edad] CHECK  (([Edad]>=(18)))
+GO
+ALTER TABLE [dbo].[Clientes] CHECK CONSTRAINT [CHK_Edad]
+GO
+/****** Practica 6:  Add to the sql script backup the complete data sctructure and append: ******/
+SET IDENTITY_INSERT [dbo].[Almacenes] ON 
+
+INSERT [dbo].[Almacenes] ([ID_Almacen], [Nombre], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (1, N'Birriesca', N'Cañada', N'230', N'Bodeaga 2', N'Torres de Parra', N'660131', N'Nuevo Leon', N'Mexico')
+INSERT [dbo].[Almacenes] ([ID_Almacen], [Nombre], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (2, N'Torrada', N'Monte Azul', N'22', N'Bodega N78', N'Mirador del Sol', N'66902', N'Nuevo Leon', N'Mexico')
+INSERT [dbo].[Almacenes] ([ID_Almacen], [Nombre], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (3, N'Amanayne', N'Gonzalitos', N'321', N'Bodega KT5', N'San Patricio', N'99784', N'Guanajuato', N'Mexico')
+INSERT [dbo].[Almacenes] ([ID_Almacen], [Nombre], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (4, N'Galada', N'Sierra blanca', N'901', N'Bodega KT5', N'San Patricio', N'99784', N'Guanajuato', N'Mexico')
+INSERT [dbo].[Almacenes] ([ID_Almacen], [Nombre], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (5, N'Amaranto', N'Kilimanjaro', N'133', N'Bodega I5', N'Villa hermosa', N'89364', N'Ciudad de Mexico', N'Mexico')
+INSERT [dbo].[Almacenes] ([ID_Almacen], [Nombre], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (6, N'Tanzania', N'Armani', N'034', N'Bodega L02', N'Nave Cerrada', N'90732', N'Ciudad de Mexico', N'Mexico')
+INSERT [dbo].[Almacenes] ([ID_Almacen], [Nombre], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (7, N'Granate', N'Amarillo', N'923', N'Bodega 1', N'Azul cielo', N'23784', N'Jalisco', N'Mexico')
+INSERT [dbo].[Almacenes] ([ID_Almacen], [Nombre], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (8, N'Miraste', N'Muralillo', N'084', N'Local T5', N'Jardines de Anahuac', N'23897', N'Jalisco', N'Mexico')
+INSERT [dbo].[Almacenes] ([ID_Almacen], [Nombre], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (9, N'Zaote', N'Cuahutemoc', N'762', N'Bodega 02J', N'Miraventana', N'12934', N'Sinaloa', N'Mexico')
+INSERT [dbo].[Almacenes] ([ID_Almacen], [Nombre], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (10, N'Yate', N'Villa Gast', N'342', N'Unidad 9', N'Villa morada', N'12073', N'Sinaloa', N'Mexico')
+INSERT [dbo].[Almacenes] ([ID_Almacen], [Nombre], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (11, N'Malta', N'Franklin', N'762', N'02J', N'San Diego', N'12934', N'Califronia', N'Estados Unidos')
+INSERT [dbo].[Almacenes] ([ID_Almacen], [Nombre], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (12, N'Raom', N'Grand Village', N'342', N'KO21', N'Michigan', N'34123', N'Colorado', N'Estados Unidos')
+SET IDENTITY_INSERT [dbo].[Almacenes] OFF
+GO
+SET IDENTITY_INSERT [dbo].[AlmacenesGuanajuato] ON 
+
+INSERT [dbo].[AlmacenesGuanajuato] ([ID_Almacen], [Nombre], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais], [DireccionAlmacen]) VALUES (3, N'Amanayne', N'Gonzalitos', N'321', N'Bodega KT5', N'San Patricio', N'99784', N'Guanajuato', N'Mexico', N'Gonzalitos Bodega KT5 321 San Patricio 99784 Guanajuato Mexico ')
+INSERT [dbo].[AlmacenesGuanajuato] ([ID_Almacen], [Nombre], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais], [DireccionAlmacen]) VALUES (4, N'Galada', N'Sierra blanca', N'901', N'Bodega KT5', N'San Patricio', N'99784', N'Guanajuato', N'Mexico', N'Sierra blanca Bodega KT5 901 San Patricio 99784 Guanajuato Mexico ')
+SET IDENTITY_INSERT [dbo].[AlmacenesGuanajuato] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Clientes] ON 
+
+INSERT [dbo].[Clientes] ([ID_Cliente], [Nombre], [PrimerApellido], [SegundoApellido], [FechaDeNacimiento], [Edad], [CorreoElectronico]) VALUES (2, N'Miguel', N'Hernandez', N'Ibarra', CAST(N'1995-10-12T00:00:00.000' AS DateTime), 24, N'mhernandez@gmail.com')
+INSERT [dbo].[Clientes] ([ID_Cliente], [Nombre], [PrimerApellido], [SegundoApellido], [FechaDeNacimiento], [Edad], [CorreoElectronico]) VALUES (3, N'Andrea Dayane', N'Gomez', N'Palacios', CAST(N'1998-06-22T00:00:00.000' AS DateTime), 22, N'andy@gmail.com')
+INSERT [dbo].[Clientes] ([ID_Cliente], [Nombre], [PrimerApellido], [SegundoApellido], [FechaDeNacimiento], [Edad], [CorreoElectronico]) VALUES (4, N'Carlos Andre', N'Carrea', N'Faz', CAST(N'1995-10-12T00:00:00.000' AS DateTime), 24, N'andrecar@gmail.com')
+INSERT [dbo].[Clientes] ([ID_Cliente], [Nombre], [PrimerApellido], [SegundoApellido], [FechaDeNacimiento], [Edad], [CorreoElectronico]) VALUES (5, N'Mariana', N'Rodriguez', N'Castro', CAST(N'1998-06-22T00:00:00.000' AS DateTime), 22, N'mardz@gmail.com')
+INSERT [dbo].[Clientes] ([ID_Cliente], [Nombre], [PrimerApellido], [SegundoApellido], [FechaDeNacimiento], [Edad], [CorreoElectronico]) VALUES (6, N'Veronica', N'Garza', N'Robles', CAST(N'1997-06-25T00:00:00.000' AS DateTime), 22, N'gvero@gmail.com')
+INSERT [dbo].[Clientes] ([ID_Cliente], [Nombre], [PrimerApellido], [SegundoApellido], [FechaDeNacimiento], [Edad], [CorreoElectronico]) VALUES (7, N'Mariano', N'Castañeda', N'Parra', CAST(N'1995-08-04T00:00:00.000' AS DateTime), 24, N'cast@gmail.com')
+INSERT [dbo].[Clientes] ([ID_Cliente], [Nombre], [PrimerApellido], [SegundoApellido], [FechaDeNacimiento], [Edad], [CorreoElectronico]) VALUES (8, N'Daniel Emiliano', N'Saenz', N'Lozano', CAST(N'1998-06-22T00:00:00.000' AS DateTime), 22, N'demuir@gmail.com')
+INSERT [dbo].[Clientes] ([ID_Cliente], [Nombre], [PrimerApellido], [SegundoApellido], [FechaDeNacimiento], [Edad], [CorreoElectronico]) VALUES (9, N'Sofia Elizabeth', N'Garza', N'Rangel', CAST(N'2000-04-13T00:00:00.000' AS DateTime), 20, N'sofgarza@gmail.com')
+INSERT [dbo].[Clientes] ([ID_Cliente], [Nombre], [PrimerApellido], [SegundoApellido], [FechaDeNacimiento], [Edad], [CorreoElectronico]) VALUES (13, N'Adrian Alejandro', N'Reyes', N'Parra', CAST(N'1999-02-13T00:00:00.000' AS DateTime), 21, N'arp@gmail.com')
+SET IDENTITY_INSERT [dbo].[Clientes] OFF
+GO
+INSERT [dbo].[log_historial] ([nombre], [Fecha], [descripcion]) VALUES (N'Debanhy', CAST(N'2020-06-05' AS Date), N'Registro nuevo')
+INSERT [dbo].[log_historial] ([nombre], [Fecha], [descripcion]) VALUES (N'Aria Daniela', CAST(N'2020-06-05' AS Date), N'Registro nuevo')
+INSERT [dbo].[log_historial] ([nombre], [Fecha], [descripcion]) VALUES (N'Ramiro Andre', CAST(N'2020-06-05' AS Date), N'Registro nuevo')
+GO
+SET IDENTITY_INSERT [dbo].[Pedidos] ON 
+
+INSERT [dbo].[Pedidos] ([ID_Pedido], [ID_Cliente], [ID_Producto], [ID_Proveedor], [ID_Almacen], [FechaPedido]) VALUES (4, 4, 7, 3, 7, CAST(N'2020-03-05' AS Date))
+INSERT [dbo].[Pedidos] ([ID_Pedido], [ID_Cliente], [ID_Producto], [ID_Proveedor], [ID_Almacen], [FechaPedido]) VALUES (5, 5, 6, 6, 6, CAST(N'2020-01-25' AS Date))
+INSERT [dbo].[Pedidos] ([ID_Pedido], [ID_Cliente], [ID_Producto], [ID_Proveedor], [ID_Almacen], [FechaPedido]) VALUES (9, 9, 2, 4, 2, CAST(N'2020-02-25' AS Date))
+INSERT [dbo].[Pedidos] ([ID_Pedido], [ID_Cliente], [ID_Producto], [ID_Proveedor], [ID_Almacen], [FechaPedido]) VALUES (12, 2, 1, 10, 1, CAST(N'2020-01-25' AS Date))
+INSERT [dbo].[Pedidos] ([ID_Pedido], [ID_Cliente], [ID_Producto], [ID_Proveedor], [ID_Almacen], [FechaPedido]) VALUES (14, 2, 3, 1, 9, CAST(N'2020-01-25' AS Date))
+INSERT [dbo].[Pedidos] ([ID_Pedido], [ID_Cliente], [ID_Producto], [ID_Proveedor], [ID_Almacen], [FechaPedido]) VALUES (15, 2, 1, 10, 1, CAST(N'2020-01-25' AS Date))
+SET IDENTITY_INSERT [dbo].[Pedidos] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Producto] ON 
+
+INSERT [dbo].[Producto] ([ID_Producto], [Nombre], [Categoria], [Proveedor], [Costo]) VALUES (1, N'Suero Base Artistry', N'Belleza', 10, 850)
+INSERT [dbo].[Producto] ([ID_Producto], [Nombre], [Categoria], [Proveedor], [Costo]) VALUES (2, N'Exact Fit Corrector líquido', N'Belleza', 10, 850)
+INSERT [dbo].[Producto] ([ID_Producto], [Nombre], [Categoria], [Proveedor], [Costo]) VALUES (3, N'Cerocarb', N'Nutricion', 7, 250)
+INSERT [dbo].[Producto] ([ID_Producto], [Nombre], [Categoria], [Proveedor], [Costo]) VALUES (4, N'Ajo Concentrado', N'Nutricion', 7, 460)
+INSERT [dbo].[Producto] ([ID_Producto], [Nombre], [Categoria], [Proveedor], [Costo]) VALUES (5, N'Desodorante Ertia', N'Cuidado Personal', 10, 250)
+INSERT [dbo].[Producto] ([ID_Producto], [Nombre], [Categoria], [Proveedor], [Costo]) VALUES (6, N'Shampoo Anticaída', N'Cuidado Personal', 10, 150)
+INSERT [dbo].[Producto] ([ID_Producto], [Nombre], [Categoria], [Proveedor], [Costo]) VALUES (7, N' Limpiador concentrado multiusos', N'Hogar', 6, 250)
+INSERT [dbo].[Producto] ([ID_Producto], [Nombre], [Categoria], [Proveedor], [Costo]) VALUES (8, N'Blanqueador para múltiples telas', N'Hogar', 6, 331)
+SET IDENTITY_INSERT [dbo].[Producto] OFF
+GO
+SET IDENTITY_INSERT [dbo].[Proveedores] ON 
+
+INSERT [dbo].[Proveedores] ([ID_Proveedor], [RFC], [RazonSocial], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (1, N'CDM150829H73', N'Civica Digital Mexico', N'Olimpo', N'408', N'Oficina 20', N'Mas Palomas', N'66463', N'Nuevo Leon', N'Mexico')
+INSERT [dbo].[Proveedores] ([ID_Proveedor], [RFC], [RazonSocial], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (2, N'PAQ591107QY3', N'PAQUIN, S.A. DE C.V', N'NETZAHUALCOYOTL', N'202', N'Local 10', N'Mirasur', N'98050', N'Nuevo Leon', N'Mexico')
+INSERT [dbo].[Proveedores] ([ID_Proveedor], [RFC], [RazonSocial], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (3, N'OPA880220626', N'OFICENTRO PAPELERÍA, S. A. DE C.V', N'MINA SIRENA', N'97', N'Bodega 3', N'Minera', N'98040', N'Nuevo Leon', N'Mexico')
+INSERT [dbo].[Proveedores] ([ID_Proveedor], [RFC], [RazonSocial], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (4, N'MNL990623QPA', N'MUEBLES NOVA LUXE, S.A. DE C.V', N'LÓPEZ PORTILLO', N'9', N'Bodega 20', N'LOMAS DEL CONSUELO', N'98608', N'Nuevo Leon', N'Mexico')
+INSERT [dbo].[Proveedores] ([ID_Proveedor], [RFC], [RazonSocial], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (5, N'COM940110JE2', N'COMPULOGIC, S.A. DE C.V.', N'AMARO', N'122', N'Oficina 3', N'BOULEVARES', N'46283', N'Nuevo Leon', N'Mexico')
+INSERT [dbo].[Proveedores] ([ID_Proveedor], [RFC], [RazonSocial], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (6, N'CLO400315I71 ', N'CASA LOPEZ S.A. DE C.V.', N'BLVD. LOPEZ PORTILLO ', N'230', N'Oficina 21', N'GUADALUPE', N'98600', N'Jalisco', N'Mexico')
+INSERT [dbo].[Proveedores] ([ID_Proveedor], [RFC], [RazonSocial], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (7, N'ENZ081008UG6', N'ENZAC S.A. DE C.V', N'HEROES DE CHAPULTEPEC', N'635', N'Oficina N3', N'LOMAS', N'66982', N'Jalisco', N'Mexico')
+INSERT [dbo].[Proveedores] ([ID_Proveedor], [RFC], [RazonSocial], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (8, N'940209PH5SAI', N'SERVICIOS AMBIENTALES INTERNACIONALES,S.A DE R.L.D', N'PROL. PINO SUAREZ', N'12', N'2719-B', N'BELLA VISTA', N'55540', N'Jalisco', N'Mexico')
+INSERT [dbo].[Proveedores] ([ID_Proveedor], [RFC], [RazonSocial], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (9, N'ACA0002161J2', N'ALTA CARGA,S.A. DE C.V', N'CARR.TAMPICO-MANTE', N'14', N'Bodega K32', N'CALETA', N'55010', N'Jalisco', N'Mexico')
+INSERT [dbo].[Proveedores] ([ID_Proveedor], [RFC], [RazonSocial], [Calle], [NumeroExt], [NumeroInt], [Colonia], [CodigoPostal], [Estado], [Pais]) VALUES (10, N'TRA740921HG1', N'TRANSINERGIA, S.A. DE C.V', N'ISLA BRITANICA', N'3420', N'Oficina 3', N'Jardines del Sur', N'44950', N'Nuevo Leon', N'Mexico')
+SET IDENTITY_INSERT [dbo].[Proveedores] OFF
+GO
+-- UPDATE STATEMENTS WITH WHERE --
+UPDATE Almacenes SET NumeroInt = 'Bodega KT5' 
+WHERE Colonia IN ('San Patricio', 'Jardines de Parra')
+GO
+UPDATE Producto SET Costo = 250
+WHERE Costo <300
+GO
+UPDATE Almacenes SET CodigoPostal = '99784', Colonia = 'San Patricio'
+WHERE Estado = 'Guanajuato'
+GO
+UPDATE Producto SET Proveedor = 10, Costo = 850 
+WHERE Proveedor BETWEEN 1 AND 3
+GO
+UPDATE Proveedores SET Estado = 'Nuevo Leon'  
+WHERE Estado <> 'Nuevo Leon'
+GO
+-- DELETE STATEMENTS
+DELETE FROM Clientes WHERE Edad <= 19
+GO
+DELETE FROM Pedidos WHERE ID_Proveedor = 2
+GO
+DELETE FROM Producto WHERE Categoria = 'Conservas'
+GO
+DELETE FROM Almacenes WHERE Pais <> 'Mexico'
+GO
+DELETE FROM Pedidos WHERE FechaPedido < '2020-01-01'
+GO
+
+/****** Practica 7:   Select - Sql script with ******/
+
+-- 5 simple selects with where clause:
+
+-- 1
+SELECT ID_Cliente, NombreCompleto FROM Clientes WHERE Edad BETWEEN 24 AND 30
+-- 2
+SELECT RFC, RazonSocial FROM Proveedores WHERE Colonia IN ('GUADALUPE', 'CALETA')
+-- 3
+SELECT Nombre, DireccionAlmacen FROM Almacenes WHERE Estado <> 'Jalisco'
+-- 4
+SELECT Nombre, Costo FROM Producto WHERE Costo >= 550
+-- 5
+SELECT ID_Pedido, ID_Cliente FROM Pedidos WHERE FechaPedido = '2020-01-25'
+
+-- 5 selects with Group by clause:
+
+--1
+SELECT Categoria, COUNT(ID_Producto) AS TotalProductos
+FROM Producto
+GROUP BY Categoria;
+-- 2
+SELECT Estado, COUNT(ID_Almacen) AS TotalAlamcenes
+FROM Almacenes
+GROUP BY Estado;
+-- 3
+SELECT ID_Proveedor, COUNT(ID_Producto) AS TotalVentas
+FROM Pedidos
+GROUP BY ID_Proveedor;
+ -- 4
+SELECT Edad, COUNT(ID_Cliente) AS TotalEdad
+FROM Clientes
+GROUP BY Edad;
+-- 5
+SELECT Colonia,  COUNT(ID_Proveedor) AS TotalProveedores
+FROM Proveedores
+GROUP BY Colonia;
+
+-- 5 selects using *aggregate funtions:
+
+-- 1
+SELECT COUNT(*) AS NumeroClientes 
+FROM Clientes;  
+-- 2
+SELECT AVG(Edad) AS PromedioEdad 
+FROM Clientes;  
+-- 2
+SELECT MAX(Costo) AS CostoMaximo 
+FROM Producto;
+-- 4
+SELECT SUM(ID_Pedido) AS TotalPedidos 
+FROM Pedidos;
+-- 5
+SELECT SUM(ID_Pedido) AS TotalPedidos 
+FROM Pedidos;
+
+-- 5 select with Having clause:
+
+-- 1
+SELECT COUNT(ID_Cliente) AS ClientesTotales_Mayores23, Edad
+FROM Clientes
+GROUP BY Edad
+HAVING Edad > 23
+-- 2
+SELECT COUNT(ID_Proveedor) AS TotaProveedores_NuevoLeon, Estado
+FROM Proveedores
+GROUP BY Estado
+HAVING Estado = 'Nuevo Leon'
+-- 3
+SELECT COUNT(ID_Pedido) AS PedidosTotalesDia_2020, FechaPedido
+FROM Pedidos
+GROUP BY FechaPedido
+HAVING FechaPedido BETWEEN '2020-01-01' AND '2020-12-31'
+-- 4
+SELECT COUNT(ID_Producto) AS Total_ProductosNutricion, Categoria
+FROM Producto
+GROUP BY Categoria
+HAVING Categoria = 'Nutricion'
+-- 5
+SELECT Colonia, COUNT(ID_Almacen) AS TotalAlmacenes
+FROM Almacenes
+GROUP BY Colonia
+HAVING Colonia = 'San Patricio'
+
+-- 5 Select with Top:
+
+-- 1
+SELECT TOP 5 * FROM Clientes;
+-- 2
+SELECT TOP 50 PERCENT * FROM Proveedores 
+WHERE CodigoPostal BETWEEN 66000 AND 99000
+-- 3
+SELECT TOP 3 * FROM Producto
+WHERE Costo < 300
+-- 4
+SELECT TOP 3 * FROM Almacenes
+WHERE Estado = 'Ciudad de Mexico';
+-- 5
+SELECT TOP 20 PERCENT * FROM Pedidos 
+WHERE ID_Proveedor = 4
+
+
+/****** Practica 8:   Advance select - Sql script with ******/
+
+-- LEFT JOIN
+SELECT Clientes.NombreCompleto, Pedidos.ID_Pedido
+FROM Clientes
+LEFT JOIN Pedidos ON Clientes.ID_Cliente = Pedidos.ID_Cliente
+ORDER BY Clientes.NombreCompleto;
+
+SELECT Almacenes.Nombre, Pedidos.ID_Pedido
+FROM Almacenes
+LEFT JOIN Pedidos ON Almacenes.ID_Almacen = Pedidos.ID_Almacen
+ORDER BY Almacenes.Nombre;
+
+-- RIGHT JOIN
+SELECT Pedidos.ID_Pedido, Proveedores.RFC, Proveedores.RazonSocial
+FROM Pedidos
+RIGHT JOIN Proveedores ON Pedidos.ID_Proveedor = Proveedores.ID_Proveedor
+ORDER BY Pedidos.ID_Pedido;
+
+SELECT Pedidos.ID_Pedido, ProductO.ID_Producto, Producto.Nombre, Producto.Costo
+FROM Pedidos
+RIGHT JOIN Producto ON Pedidos.ID_Producto = Producto.ID_Producto
+ORDER BY Pedidos.ID_Pedido;
+
+-- INNER JOIN
+SELECT Pedidos.ID_Pedido, Clientes.NombreCompleto AS Cliente, Proveedores.RFC AS Proveedor_RFC, Almacenes.Nombre AS Almacen, 
+Producto.Nombre AS Producto FROM Pedidos
+INNER JOIN Clientes ON Pedidos.ID_Cliente = Clientes.ID_Cliente
+INNER JOIN Proveedores ON Pedidos.ID_Proveedor = Proveedores.ID_Proveedor
+INNER JOIN Almacenes ON Pedidos.ID_Almacen = Almacenes.ID_Almacen
+INNER JOIN Producto ON Pedidos.ID_Producto = Producto.ID_Producto
+
+SELECT Producto.ID_Producto, Producto.Nombre AS Producto, Producto.Costo, Proveedores.RFC AS Proveedor FROM Producto
+INNER JOIN Proveedores ON Producto.Proveedor = Proveedores.ID_Proveedor
+
+-- 1 subquery
+SELECT Clientes.Nombre, Clientes.PrimerApellido, 
+TotalPedidos = (SELECT COUNT(Pedidos.ID_Cliente) FROM Pedidos WHERE Pedidos.ID_Cliente = Clientes.ID_Cliente)
+FROM Clientes
+
+-- – 1 Select With * 1 Select into
+CREATE SCHEMA AlmacenesGuanajuato
+SELECT * INTO AlmacenesGuanajuato
+FROM Almacenes
+WHERE Estado = 'Guanajuato';
+
+/****** Object:  Table [dbo].[AlmacenesGuanajuato]    Script Date: 05/06/2020 09:13:58 a. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[AlmacenesGuanajuato](
+	[ID_Almacen] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [varchar](50) NOT NULL,
+	[Calle] [varchar](50) NOT NULL,
+	[NumeroExt] [varchar](20) NOT NULL,
+	[NumeroInt] [varchar](50) NOT NULL,
+	[Colonia] [varchar](50) NOT NULL,
+	[CodigoPostal] [varchar](50) NOT NULL,
+	[Estado] [varchar](50) NOT NULL,
+	[Pais] [varchar](50) NOT NULL,
+	[DireccionAlmacen] [varchar](327) NOT NULL
+) ON [PRIMARY]
+GO
+
+/****** Object:  Schema [AlmacenesGuanajuato]    Script Date: 05/06/2020 09:13:58 a. m. ******/
+CREATE SCHEMA [AlmacenesGuanajuato]
+GO
+
+
+/****** Practica 9:   Create and query 5 views using joins, group or having, the views must be system reports ******/
+
+/****** Object:  View [dbo].[Reporte de Pedidos - 2020]    Script Date: 05/06/2020 09:13:58 a. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[Reporte de Pedidos - 2020] AS
+SELECT Pedidos.ID_Pedido, Clientes.NombreCompleto AS Cliente, Proveedores.RFC AS Proveedor_RFC, Almacenes.Nombre AS Almacen, 
+Producto.Nombre AS Producto FROM Pedidos
+INNER JOIN Clientes ON Pedidos.ID_Cliente = Clientes.ID_Cliente
+INNER JOIN Proveedores ON Pedidos.ID_Proveedor = Proveedores.ID_Proveedor
+INNER JOIN Almacenes ON Pedidos.ID_Almacen = Almacenes.ID_Almacen
+INNER JOIN Producto ON Pedidos.ID_Producto = Producto.ID_Producto
+WHERE FechaPedido > '2020-01-01'
+GO
+/****** Object:  View [dbo].[AlamcenesPor_Pais]    Script Date: 05/06/2020 09:13:58 a. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE VIEW [dbo].[AlamcenesPor_Pais] AS
+SELECT Pais, COUNT(ID_Almacen)AS ID_Alamacen
+FROM Almacenes
+GROUP BY Pais
+GO
+/****** Object:  View [dbo].[Alamcenes_NuevoLeon]    Script Date: 05/06/2020 09:13:58 a. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[Alamcenes_NuevoLeon] AS
+SELECT COUNT(ID_Proveedor) AS TotaProveedores_NuevoLeon, Estado
+FROM Proveedores
+GROUP BY Estado
+HAVING Estado = 'Nuevo Leon'
+GO
+/****** Object:  View [dbo].[Reporte de Clientes con Compras]    Script Date: 05/06/2020 09:13:58 a. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[Reporte de Clientes con Compras] 
+AS
+SELECT 
+	Clientes.ID_Cliente,
+	Clientes.NombreCompleto AS Nombre,
+	Clientes.FechaDeNacimiento AS FechaNacimiento,
+	Clientes.CorreoElectronico AS Email
+FROM Clientes
+	INNER JOIN Pedidos ON Pedidos.ID_Cliente = Clientes.ID_Cliente
+GO
+/****** Object:  View [dbo].[Listado de Almacenes con mas de 1 Pedido]    Script Date: 05/06/2020 09:13:58 a. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[Listado de Almacenes con mas de 1 Pedido] 
+AS
+SELECT Almacenes.Nombre, COUNT(Pedidos.ID_Pedido) AS NumberOfOrders
+FROM (Pedidos
+INNER JOIN Almacenes ON Pedidos.ID_Almacen = Almacenes.ID_Almacen)
+GROUP BY Nombre
+HAVING COUNT(Pedidos.ID_Pedido) > 1;
+GO
+
+/****** Practica 10:   Programability ******/
+
 
 /****** Object:  StoredProcedure [dbo].[BsucarPedidosPorFecha]    Script Date: 05/06/2020 09:13:58 a. m. ******/
 SET ANSI_NULLS ON
@@ -142,6 +618,45 @@ USE [master]
 GO
 ALTER DATABASE [LBD] SET  READ_WRITE 
 GO
+/****** Object:  StoredProcedure [dbo].[BuscarPorRango_CodigoPostal]    Script Date: 05/06/2020 12:00:53 p. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[BuscarPorRango_CodigoPostal] @codigoPostal1 varchar(50),  @codigoPostal2 varchar(50)
+AS
+SELECT TOP 50 PERCENT * FROM Proveedores 
+WHERE CodigoPostal BETWEEN @codigoPostal1 AND @codigoPostal2
+GO
+/****** Object:  UserDefinedFunction [dbo].[costoProducto_Descuento]    Script Date: 05/06/2020 12:00:53 p. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE FUNCTION [dbo].[costoProducto_Descuento](
+    @cantidad INT,
+    @costo DEC(10,2),
+    @descuento DEC(4,2)
+)
+RETURNS DEC(10,2)
+AS 
+BEGIN
+    RETURN @cantidad * @costo * (1 - @descuento);
+END;
+GO
+/****** Object:  UserDefinedFunction [dbo].[costoProducto_IVAIncluido]    Script Date: 05/06/2020 12:00:53 p. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE FUNCTION [dbo].[costoProducto_IVAIncluido] (@param1 money)
+RETURNS money
+AS BEGIN
+	DECLARE @TOTAL_IVA money
+	SET @TOTAL_IVA = @param1 * 1.16
+    RETURN 1.16 * @param1
+END
+GO
 /****** Object:  Table [dbo].[log_historial]    Script Date: 05/06/2020 09:13:58 a. m. ******/
 SET ANSI_NULLS ON
 GO
@@ -153,22 +668,12 @@ CREATE TABLE [dbo].[log_historial](
 	[descripcion] [varchar](50) NULL
 ) ON [PRIMARY]
 GO
--- instead of trigger
-CREATE TRIGGER TR_log_Cliente ON Clientes
-INSTEAD OF INSERT
-AS
-BEGIN
-SET NOCOUNT ON;
-INSERT INTO log_historial(nombre, fecha, descripcion) SELECT nombre, GETDATE(), 'Registro nuevo'
-FROM inserted
-END
-
-INSERT INTO Clientes VALUES ('Aria Daniela', 'Benavides', 'Reyna', '1999-02-13', 21, 'aria@gmail.com') 
-SELECT * FROM Clientes
-SELECT * FROM log_historial
-
--- AFTER TRIGGER
-CREATE TRIGGER TR_Cliente_Estatico ON Clientes
+/****** Object:  Trigger [dbo].[TR_Cliente_Estatico]    Script Date: 05/06/2020 10:42:17 a. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TRIGGER [dbo].[TR_Cliente_Estatico] ON [dbo].[Clientes]
 AFTER INSERT 
 AS
 BEGIN
@@ -176,5 +681,35 @@ BEGIN
 	SELECT * FROM deleted
 END
 GO
+ALTER TABLE [dbo].[Clientes] ENABLE TRIGGER [TR_Cliente_Estatico]
+GO
+INSERT INTO Clientes VALUES ('Aria Daniela', 'Benavides', 'Reyna', '1999-02-13', 21, 'aria@gmail.com') 
+GO
+SELECT * FROM Clientes
+GO
+SELECT * FROM log_historial
+GO
+/****** Object:  Trigger [dbo].[TR_log_Cliente]    Script Date: 05/06/2020 10:42:17 a. m. ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TRIGGER [dbo].[TR_log_Cliente] ON [dbo].[Clientes]
+INSTEAD OF INSERT
+AS
+BEGIN
+SET NOCOUNT ON;
+INSERT INTO log_historial(nombre, fecha, descripcion) SELECT nombre, GETDATE(), 'Registro nuevo'
+FROM inserted
+END
+GO
+ALTER TABLE [dbo].[Clientes] ENABLE TRIGGER [TR_log_Cliente]
+GO
+USE [master]
+GO
+ALTER DATABASE [LBD] SET  READ_WRITE 
+GO
 INSERT INTO Clientes VALUES ('Ramiro Andre', 'Villasana', 'Treviño', '1999-02-13', 21, 'ramtrev@gmail.com') 
+GO
 
